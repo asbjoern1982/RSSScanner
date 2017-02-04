@@ -11,6 +11,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -46,7 +47,11 @@ public class RSSScannerMain extends Application {
 		root.setHgap(5);
 		root.setVgap(5);
 		root.setPadding(new Insets(10));
-		root.add(keyWordsTextField, 0, 0, 2, 1);
+		
+		HBox keyWordBox = new HBox();
+		keyWordBox.getChildren().add(new Label("Keywords:"));
+		keyWordBox.getChildren().add(keyWordsTextField);
+		root.add(keyWordBox, 0, 0, 2, 1);
 		root.add(messageList, 0, 1);
 		root.add(messageText, 1, 1);
 		
@@ -70,11 +75,10 @@ public class RSSScannerMain extends Application {
 		}
 		
 		public void editFeedsAction() {
-			
+			//TODO create new window to edit feeds
 		}
 		
 		public void searchAction() {
-			String[] keywords = keyWordsTextField.getText().split(",");
 			List<Message> messages = Service.searchFeeds();
 			messageList.getItems().setAll(messages);
 		}
