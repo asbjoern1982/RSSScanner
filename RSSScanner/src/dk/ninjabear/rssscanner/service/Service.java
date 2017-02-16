@@ -33,4 +33,11 @@ public class Service {
 	}
 	
 	public static List<String> getKeyWords() {return Storage.getKeyWords();}
+	public static void addKeyWord(String keyWord) {Storage.storeKeyWord(keyWord);}
+	public static void removeKeyWord(String keyWord) {Storage.removeKeyWord(keyWord);}
+	
+	public static List<String> getUrls() {return Storage.getUrls();}
+	public static void addUrl(String url) {Storage.storeUrl(url);}
+	public static void removeUrl(String url) {Storage.removeUrl(url);}
+	public static void updateUrl(String oldUrl, String newUrl) {Storage.updateUrl(oldUrl, newUrl);}
 }
