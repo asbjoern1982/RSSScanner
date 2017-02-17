@@ -1,5 +1,6 @@
 package dk.ninjabear.rssscanner.gui;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -171,6 +172,8 @@ public class RSSScannerMain extends Application {
 		
 		public void searchAction() {
 			List<Message> messages = Service.searchFeeds();
+			Collections.sort(messages);
+			Collections.reverse(messages);
 			messageList.getItems().setAll(messages);
 		}
 	}
