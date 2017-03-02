@@ -3,12 +3,10 @@ package dk.ninjabear.rssscanner.gui;
 import dk.ninjabear.rssscanner.service.Service;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -20,7 +18,7 @@ public class KeyWordDialog extends Stage {
 	
 	public KeyWordDialog() {
 		initModality(Modality.APPLICATION_MODAL);
-		setTitle("Select Sudoku");
+		setTitle("Edit Keywords");
 		GridPane pane = new GridPane();
 		initContent(pane);
 		setScene(new Scene(pane));

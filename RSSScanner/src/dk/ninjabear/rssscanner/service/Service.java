@@ -13,7 +13,6 @@ public class Service {
 		List<String> urls = Storage.getUrls();
 		List<String> keyWords = Storage.getKeyWords();
 		List<Message> messages = new ArrayList<>();
-		System.out.println("starting");
 		for (String url : urls) {
 			RSSParser parser = new RSSParser(url);
 			Feed feed = parser.readFeed();
@@ -28,7 +27,24 @@ public class Service {
 			    }
 			}
 		}
-		System.out.println("finised");
+		return messages;
+	}
+	
+	public static List<Message> searchFeed(String url, List<String> keyWords) {
+		List<Message> messages = new ArrayList<>();
+		RSSParser parser = new RSSParser(url);
+		Feed feed = parser.readFeed();
+		
+		for (Message message : feed.getMessages()) {
+		    String title = message.getTitle();
+		    String description = message.getDescription();
+		
+		    for (String keyWord : keyWords) {
+		    	if (title.contains(keyWord) || description.contains(keyWord))
+		    		messages.add(message);
+		    }
+		}
+		
 		return messages;
 	}
 	

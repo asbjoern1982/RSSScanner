@@ -1,12 +1,15 @@
 package dk.ninjabear.rssscanner.gui;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import dk.ninjabear.rssscanner.model.Message;
 import dk.ninjabear.rssscanner.service.Service;
+import dk.ninjabear.rssscanner.storage.Storage;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -48,6 +51,7 @@ public class RSSScannerMain extends Application {
 	private final ListView<String> feedList = new ListView<>();
 	private final ListView<Message> messageList = new ListView<>();
 	private final TextArea messageText = new TextArea();
+	private final Button searchButton = new Button("Search");
 	
 	private void initContent(BorderPane root) {
 		root.setPadding(new Insets(10));
@@ -86,7 +90,6 @@ public class RSSScannerMain extends Application {
 		
 		center.add(feedButtons, 0, 2);
 				
-		Button searchButton = new Button("Search");
 		searchButton.setDefaultButton(true);
 		searchButton.setOnAction(e -> controller.searchAction());
 		GridPane.setHalignment(searchButton, HPos.RIGHT);
@@ -97,6 +100,7 @@ public class RSSScannerMain extends Application {
 	private class Controller {
 		public Stage primaryStage;
 		private KeyWordDialog keyWordDialog;
+		private ProgressDialog progressDialog;
 		
 		public void updateControls() {
 			keyWordsTextField.setText(String.join("; ", Service.getKeyWords()));
@@ -171,10 +175,42 @@ public class RSSScannerMain extends Application {
 		}
 		
 		public void searchAction() {
-			List<Message> messages = Service.searchFeeds();
-			Collections.sort(messages);
-			Collections.reverse(messages);
-			messageList.getItems().setAll(messages);
+			if (progressDialog == null) {
+				progressDialog = new ProgressDialog();
+				progressDialog.initOwner(primaryStage);
+			} else progressDialog.reset();
+
+			Task<Void> task = new Task<Void>() {
+				@Override
+				public Void call() throws InterruptedException {
+					// setup
+					List<String> urls = Storage.getUrls();
+					List<String> keyWords = Storage.getKeyWords();
+					List<Message> messages = new ArrayList<>();
+
+					// loop
+					for (int index = 0; index < urls.size(); index++) {
+						messages.addAll(Service.searchFeed(urls.get(index), keyWords));
+						updateProgress(index, urls.size());
+
+					}
+					// done, update gui
+					Collections.sort(messages);
+					Collections.reverse(messages);
+					messageList.getItems().setAll(messages);
+					return null;
+				}
+			};
+			
+			task.setOnSucceeded(e -> {
+				searchButton.setDisable(false);
+				progressDialog.close();
+			});
+
+			progressDialog.bindTask(task);
+			progressDialog.show();
+			searchButton.setDisable(true);
+			new Thread(task).start();
 		}
 	}
 }
